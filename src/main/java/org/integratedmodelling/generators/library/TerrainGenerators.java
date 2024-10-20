@@ -26,15 +26,21 @@ public class TerrainGenerators {
             elevation or slope. As the generator works in RAM, this should not be used on very large grids.""",
                   geometry = "S2", type = Type.NUMBER, version = Version.CURRENT,
                   parameters = {
-                          @KlabFunction.Argument(name = "range", type = Type.RANGE, description = "The  min-max range of the values produced. Default is 0 to 4000", optional = true),
-                          @KlabFunction.Argument(name = "detail", type = Type.NUMBER, description = "Controls the amount of detail in the generated structure. Default is 8, appropriate "
+                          @KlabFunction.Argument(name = "range", type = Type.RANGE, description = "The  " +
+                                  "min-max range of the values produced. Default is 0 to 4000", optional =
+                                  true),
+                          @KlabFunction.Argument(name = "detail", type = Type.NUMBER, description =
+                                  "Controls the amount of detail in the generated structure. Default is 8, " +
+                                          "appropriate "
                                   + "for geographical elevation", optional = true),
-                          @KlabFunction.Argument(name = "roughness", type = Type.NUMBER, description = "Controls the roughness of the generated terrain. Default is 0.55, appropriate" +
+                          @KlabFunction.Argument(name = "roughness", type = Type.NUMBER, description =
+                                  "Controls the roughness of the generated terrain. Default is 0.55, " +
+                                          "appropriate" +
                                   " for geographical elevation", optional = true)})
-    public void generateTerrain(DoubleStorage storage, ServiceCall call, ContextScope scope) {
+    public void generateTerrain(DoubleStorage storage, Scale scale, ServiceCall call) {
 
         var range = call.getParameters().get("range", NumericRange.create(0., 4000., false, false));
-        var xy = scope.getContextObservation().getGeometry().dimension(Dimension.Type.SPACE).getShape();
+        var xy = scale.getSpace().getShape();
         var terrain = new Terrain(call.getParameters().get("detail", 8), call.getParameters().get(
                 "roughness", 0.55), range.getLowerBound(), range.getUpperBound());
 
@@ -48,8 +54,7 @@ public class TerrainGenerators {
          geometry
          requirement ensures that we get a regular 2D spatial extent, so this is safe w/o error checking.
          */
-        for (Geometry subscale :
-                Scale.create(scope.getContextObservation().getGeometry()).without(Dimension.Type.SPACE)) {
+        for (Geometry subscale : scale.without(Dimension.Type.SPACE)) {
 
             double dx = 1.0 / (double) xy.get(0);
             double dy = 1.0 / (double) xy.get(1);
@@ -59,7 +64,7 @@ public class TerrainGenerators {
              * space is iterated through a fast 2D offset and storage buffer.
              */
             for (var offset :
-                    scope.getContextObservation().getGeometry().at(subscale).as(DimensionScanner2D.class)) {
+                    scale.at(subscale).as(DimensionScanner2D.class)) {
                 buffer.add(terrain.getAltitude(dx * offset.x(), dy * offset.y()), offset.position());
             }
         }
