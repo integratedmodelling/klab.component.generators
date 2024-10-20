@@ -3,15 +3,69 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <groupId>org.integratedmodelling</groupId>
+    <parent>
+        <artifactId>klab-services</artifactId>
+        <groupId>org.integratedmodelling</groupId>
+        <version>0.11.0-SNAPSHOT</version>
+    </parent>
     <artifactId>klab.component.generators</artifactId>
     <version>1.0-SNAPSHOT</version>
-
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>org.integratedmodelling:klab.core.services</exclude>
+                                </excludes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Plugin-Class>org.integratedmodelling.generators.GeneratorsPlugin</Plugin-Class>
+                            <Plugin-Id>klab.component.generator</Plugin-Id>
+                            <Plugin-Version>0.11.0-SNAPSHOT</Plugin-Version>
+<!--                            <Plugin-Requires>1.0.0</Plugin-Requires>-->
+<!--                            <Plugin-Dependencies>x, y, z</Plugin-Dependencies>-->
+                            <Plugin-Description>My example plugin</Plugin-Description>
+                            <Plugin-Provider>Integrated Modelling Partnership</Plugin-Provider>
+                            <Plugin-License>GPL 3.0</Plugin-License>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    
+    <dependencies>
+        <dependency>
+            <groupId>org.integratedmodelling</groupId>
+            <artifactId>klab.core.services</artifactId>
+            <version>0.11.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 </project>
