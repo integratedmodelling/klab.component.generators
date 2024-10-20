@@ -7,13 +7,10 @@ import org.integratedmodelling.klab.api.geometry.DimensionScanner2D;
 import org.integratedmodelling.klab.api.geometry.Geometry;
 import org.integratedmodelling.klab.api.geometry.Geometry.Dimension;
 import org.integratedmodelling.klab.api.knowledge.Artifact.Type;
-import org.integratedmodelling.klab.api.knowledge.observation.State;
 import org.integratedmodelling.klab.api.knowledge.observation.scale.Scale;
 import org.integratedmodelling.klab.api.lang.ServiceCall;
-import org.integratedmodelling.klab.api.scope.ContextScope;
 import org.integratedmodelling.klab.api.services.runtime.extension.KlabFunction;
 import org.integratedmodelling.klab.api.services.runtime.extension.Library;
-import org.integratedmodelling.klab.api.services.runtime.extension.Resolver;
 import org.integratedmodelling.klab.runtime.storage.DoubleStorage;
 
 @Library(name = "klab.generators.geospatial", description = """
