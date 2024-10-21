@@ -21,7 +21,7 @@ public class TerrainGenerators {
             Generate fractal surfaces within a user-defined range \
             and with a configurable degree of smoothness, apt to simulating several terrain patterns such as \
             elevation or slope. As the generator works in RAM, this should not be used on very large grids.""",
-                  geometry = "S2", type = Type.NUMBER, version = Version.CURRENT,
+                  geometry = "S2", type = Type.NUMBER,
                   parameters = {
                           @KlabFunction.Argument(name = "range", type = Type.RANGE, description = "The  " +
                                   "min-max range of the values produced. Default is 0 to 4000", optional =
