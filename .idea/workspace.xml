@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="10b76718-7636-41dd-92b5-89dc7be078fc" name="Changes" comment="Streamline arguments">
+    <list default="true" id="10b76718-7636-41dd-92b5-89dc7be078fc" name="Changes" comment="API sync">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/integratedmodelling/generators/library/TerrainGenerators.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/integratedmodelling/generators/library/TerrainGenerators.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,6 +28,9 @@
     &quot;accountId&quot;: &quot;72701ce6-fe22-4ed1-bdd0-2b888bf78bde&quot;
   }
 }</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="jar://$MAVEN_REPOSITORY$/org/integratedmodelling/klab.core.api/0.11.0-SNAPSHOT/klab.core.api-0.11.0-20241018.184053-17-sources.jar!/org/integratedmodelling/klab/api/services/runtime/extension/KlabFunction.java" root0="SKIP_INSPECTION" />
+  </component>
   <component name="ProjectCodeStyleSettingsMigration">
     <option name="version" value="2" />
   </component>
@@ -108,7 +111,15 @@
       <option name="project" value="LOCAL" />
       <updated>1729425708351</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="API sync">
+      <option name="closed" value="true" />
+      <created>1729521779763</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1729521779763</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -117,6 +128,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Add basic geospatial contextualizer" />
     <MESSAGE value="Streamline arguments" />
-    <option name="LAST_COMMIT_MESSAGE" value="Streamline arguments" />
+    <MESSAGE value="API sync" />
+    <option name="LAST_COMMIT_MESSAGE" value="API sync" />
   </component>
 </project>
