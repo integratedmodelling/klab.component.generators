@@ -1,11 +1,12 @@
 package org.integratedmodelling.generators.adapters;
 
+import org.integratedmodelling.klab.api.data.Version;
 import org.integratedmodelling.klab.api.knowledge.Artifact;
 import org.integratedmodelling.klab.api.knowledge.Resource;
 import org.integratedmodelling.klab.api.knowledge.Urn;
 import org.integratedmodelling.klab.api.services.resources.adapters.ResourceAdapter;
 
-@ResourceAdapter(name = "random", universal = true)
+@ResourceAdapter(name = "random", universal = true, version = Version.CURRENT)
 public class RandomGeneratorAdapter {
 
     @ResourceAdapter.Encoder
@@ -26,4 +27,6 @@ public class RandomGeneratorAdapter {
         // TODO objects
         return Artifact.Type.NUMBER;
     }
+
+
 }
