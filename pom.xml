@@ -12,25 +12,25 @@
     <version>1.0-SNAPSHOT</version>
     <build>
         <plugins>
-            <plugin>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.6.0</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <artifactSet>
-                                <excludes>
-                                    <exclude>org.integratedmodelling:klab.core.services</exclude>
-                                </excludes>
-                            </artifactSet>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <artifactId>maven-shade-plugin</artifactId>-->
+<!--                <version>3.6.0</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>shade</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <artifactSet>-->
+<!--                                <excludes>-->
+<!--                                    <exclude>org.integratedmodelling:klab.core.services</exclude>-->
+<!--                                </excludes>-->
+<!--                            </artifactSet>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -60,12 +60,53 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+
+    <licenses>
+        <license>
+            <name>GNU Affero General Public License (AGPL) version 3.0</name>
+            <url>http://www.gnu.org/licenses/agpl-3.0.en.html</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Ferdinando Villa</name>
+            <email>ferdinando.villa@bc3research.org</email>
+            <organization>Basque Centre for Climate Change (BC3); IKERBASQUE, Basque foundation for science
+            </organization>
+            <organizationUrl>http://www.bc3research.org</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:http://github.com/integratedmodelling/klab.component.generators</connection>
+        <developerConnection>scm:git:https://github.com/integratedmodelling/klab.component.generators</developerConnection>
+        <url>https://github.com/integratedmodelling/klab.component.generators.git</url>
+    </scm>
+
+    <organization>
+        <name>integratedmodelling.org</name>
+        <url>http://www.integratedmodelling.org</url>
+    </organization>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+    </distributionManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.integratedmodelling</groupId>
             <artifactId>klab.core.services</artifactId>
             <version>0.11.0-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
+
 </project>
