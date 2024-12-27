@@ -42,11 +42,11 @@
                         </manifest>
                         <manifestEntries>
                             <Plugin-Class>org.integratedmodelling.generators.GeneratorsPlugin</Plugin-Class>
-                            <Plugin-Id>klab.component.generator</Plugin-Id>
+                            <Plugin-Id>klab.component.generators</Plugin-Id>
                             <Plugin-Version>0.11.0-SNAPSHOT</Plugin-Version>
 <!--                            <Plugin-Requires>1.0.0</Plugin-Requires>-->
 <!--                            <Plugin-Dependencies>x, y, z</Plugin-Dependencies>-->
-                            <Plugin-Description>My example plugin</Plugin-Description>
+                            <Plugin-Description>Autonomous observation generation for testing</Plugin-Description>
                             <Plugin-Provider>Integrated Modelling Partnership</Plugin-Provider>
                             <Plugin-License>*</Plugin-License>
                         </manifestEntries>
