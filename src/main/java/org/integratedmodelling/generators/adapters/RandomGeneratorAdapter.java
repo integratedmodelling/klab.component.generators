@@ -97,10 +97,10 @@ public class RandomGeneratorAdapter {
     public static String[] namespace_ids = new String[]{DATA, EVENTS, OBJECTS};
     public static String[] shape_ids = new String[]{LINES, POINTS, POLYGONS};
     public static String[] distribution_ids = new String[]{POISSON, PASCAL, HYPERGEOMETRIC, GEOMETRIC,
-                                                           BINOMIAL, GAUSSIAN,
-                                                           LAPLACE, EXPONENTIAL, F, T, NAKAGAMI, BETA,
-                                                           CAUCHY, TRIANGULAR, GAMMA, PARETO, WEIBULL, LEVY,
-                                                           LOGNORMAL, LOGISTIC, UNIFORM};
+                                                           BINOMIAL, GAUSSIAN, LAPLACE, EXPONENTIAL, F, T,
+                                                           NAKAGAMI, BETA, CAUCHY, TRIANGULAR, GAMMA,
+                                                           PARETO, WEIBULL, LEVY, LOGNORMAL, LOGISTIC,
+                                                           UNIFORM};
     public static String[] object_attribute_ids = new String[]{FRACTION, XDIVS, YDIVS, VERTICES, STD, GRID,
                                                                P0, P1, P2, P3, DURATION, START};
 
@@ -120,23 +120,21 @@ public class RandomGeneratorAdapter {
             case DATA -> makeData(urn, builder, geometry);
             case EVENTS -> makeEvents(urn, builder, geometry);
             case OBJECTS -> makeObjects(urn, builder, geometry, observable);
-            default -> builder.notification(Notification.error("Random generator adapter: cannot establish " +
-                    "what to do with " + urn));
+            default -> builder.notification(Notification.error(
+                    "Random generator adapter: cannot establish " + "what to do with " + urn));
         }
     }
 
     private void makeObjects(Urn urn, Data.Builder builder, Geometry geometry, Observable observable) {
-        
-        int vertices = urn.getParameters().containsKey(VERTICES) ?
-                       Integer.parseInt(urn.getParameters().get(VERTICES))
-                                                                 : 5;
-        int xdivs = urn.getParameters().containsKey(XDIVS) ?
-                    Integer.parseInt(urn.getParameters().get(XDIVS)) : 10;
-        int ydivs = urn.getParameters().containsKey(YDIVS) ?
-                    Integer.parseInt(urn.getParameters().get(YDIVS)) : 10;
-        double probability = urn.getParameters().containsKey(FRACTION)
-                             ? Double.parseDouble(urn.getParameters().get(FRACTION))
-                             : 0.5;
+
+        int vertices = urn.getParameters().containsKey(VERTICES) ? Integer.parseInt(
+                urn.getParameters().get(VERTICES)) : 5;
+        int xdivs = urn.getParameters().containsKey(XDIVS) ? Integer.parseInt(
+                urn.getParameters().get(XDIVS)) : 10;
+        int ydivs = urn.getParameters().containsKey(YDIVS) ? Integer.parseInt(
+                urn.getParameters().get(YDIVS)) : 10;
+        double probability = urn.getParameters().containsKey(FRACTION) ? Double.parseDouble(
+                urn.getParameters().get(FRACTION)) : 0.5;
         String artifactName = urn.getResourceId().substring(0, urn.getResourceId().length() - 1);
 
         var scale = Scale.create(geometry);
@@ -157,20 +155,21 @@ public class RandomGeneratorAdapter {
                  * TODO honor any filters on the shapes - area, width, length, whatever
                  */
 
-                var obuilder =
-                        objects.add().name(artifactName + "_" + (++n)).geometry(shape.as(Geometry.class));
+                var obuilder = objects.newObject().name(artifactName + "_" + (++n)).geometry(
+                        shape.as(Geometry.class));
 
                 if (!urn.getParameters().isEmpty()) {
                     for (String attribute : urn.getParameters().keySet()) {
                         if (Arrays.binarySearch(object_attribute_ids, attribute) < 0) {
-                            Object value = getAttributeValue(urn.getParameters().get
-                                    (attribute));
+                            Object value = getAttributeValue(urn.getParameters().get(attribute));
                             if (value != null) {
-                                //  obuilder.withMetadata(attribute, value);
+                                obuilder.withMetadata(attribute, value);
                             }
                         }
                     }
                 }
+
+                obuilder.add();
 
             }
         }
@@ -361,7 +360,7 @@ public class RandomGeneratorAdapter {
             case HYPERGEOMETRIC:
                 if (params.size() == 3) {
                     ret = new HypergeometricDistribution(params.get(0).intValue(), params.get(1).intValue(),
-                            params.get(2).intValue());
+                                                         params.get(2).intValue());
                 }
                 break;
             case PASCAL:
@@ -404,7 +403,8 @@ public class RandomGeneratorAdapter {
             case DATA -> Artifact.Type.NUMBER;
             case EVENTS -> Artifact.Type.EVENT;
             case OBJECTS -> Artifact.Type.OBJECT;
-            default -> throw new KlabUnimplementedException("random adapter: can't handle URN " + resourceUrn);
+            default ->
+                    throw new KlabUnimplementedException("random adapter: can't handle URN " + resourceUrn);
         };
     }
 
