@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.knowledge.Artifact;
 import org.integratedmodelling.klab.api.knowledge.Observable;
 import org.integratedmodelling.klab.api.knowledge.Urn;
 import org.integratedmodelling.klab.api.knowledge.observation.scale.Scale;
+import org.integratedmodelling.klab.api.scope.Scope;
 import org.integratedmodelling.klab.api.services.resources.adapters.ResourceAdapter;
 import org.integratedmodelling.klab.api.services.runtime.Notification;
 import org.integratedmodelling.klab.configuration.ServiceConfiguration;
@@ -135,11 +136,12 @@ public class RandomGeneratorAdapter {
   }
 
   @ResourceAdapter.Encoder
-  public void encode(Urn urn, Data.Builder builder, Geometry geometry, Observable observable) {
+  public void encode(
+      Urn urn, Data.Builder builder, Geometry geometry, Observable observable, Scope scope) {
     switch (urn.getNamespace()) {
       case DATA -> makeData(urn, builder, geometry);
       case EVENTS -> makeEvents(urn, builder, geometry);
-      case OBJECTS -> makeObjects(urn, builder, geometry, observable);
+      case OBJECTS -> makeObjects(urn, builder, geometry, observable, scope);
       default ->
           builder.notification(
               Notification.error(
@@ -148,7 +150,7 @@ public class RandomGeneratorAdapter {
   }
 
   private void makeObjects(
-      Urn urn, Data.Builder builder, Geometry geometry, Observable observable) {
+      Urn urn, Data.Builder builder, Geometry geometry, Observable observable, Scope scope) {
 
     int vertices =
         urn.getParameters().containsKey(VERTICES)
@@ -169,11 +171,11 @@ public class RandomGeneratorAdapter {
     String artifactName = urn.getResourceId().substring(0, urn.getResourceId().length() - 1);
 
     var scale = Scale.create(geometry);
+    var obs = Observable.promote(observable.getSemantics().singular());
 
     if (scale.getSpace() != null) {
 
       var envelope = scale.getSpace().getEnvelope();
-      var objects = builder.objectCollection();
 
       int n = 0;
       for (var shape :
@@ -189,24 +191,20 @@ public class RandomGeneratorAdapter {
          */
 
         var oScale = scale.with(shape);
-        var oBuilder =
-            objects
-                .newObject()
-                .name(artifactName + "_" + (++n))
-                .geometry(oScale.as(Geometry.class));
+        var oBuilder = builder.object(artifactName + "_" + (++n), obs, oScale.as(Geometry.class));
 
         if (!urn.getParameters().isEmpty()) {
           for (String attribute : urn.getParameters().keySet()) {
             if (Arrays.binarySearch(object_attribute_ids, attribute) < 0) {
               Object value = getAttributeValue(urn.getParameters().get(attribute));
               if (value != null) {
-                oBuilder.withMetadata(attribute, value);
+                oBuilder.metadata(attribute, value);
               }
             }
           }
         }
 
-        oBuilder.add();
+        oBuilder.build();
       }
     }
   }
@@ -456,11 +454,12 @@ public class RandomGeneratorAdapter {
             + "shape"
             + "=00000000030000000100000005C0522AF2DBCA0987400C8361185B1480C052CE99DBCA0987400C8361185B1480C052CE99DBCA098740153636BF7AE340C0522AF2DBCA098740153636BF7AE340C0522AF2DBCA0987400C8361185B1480,proj=EPSG:4326}";
 
+    var observable = Observable.objects();
     var geometry = Geometry.create(centralColombia);
-    var builder = Data.builder("colombia", geometry);
+    var builder = Data.builder("colombia", observable, geometry);
     var adapter = new RandomGeneratorAdapter();
 
-    adapter.encode(Urn.of("klab:random:objects:polygons"), builder, geometry, null);
+    adapter.encode(Urn.of("klab:random:objects:polygons"), builder, geometry, observable, null);
 
     var built = builder.build();
     System.out.println(built);
