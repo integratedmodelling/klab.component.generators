@@ -167,8 +167,12 @@ public class RandomGeneratorAdapter {
     double probability =
         urn.getParameters().containsKey(FRACTION)
             ? Double.parseDouble(urn.getParameters().get(FRACTION))
-            : 0.5;
-    String artifactName = urn.getResourceId().substring(0, urn.getResourceId().length() - 1);
+            : 0.2;
+
+    String artifactName =
+        observable.getStatedName() == null
+            ? urn.getResourceId().substring(0, urn.getResourceId().length() - 1)
+            : observable.getStatedName();
 
     var scale = Scale.create(geometry);
     var obs = Observable.promote(observable.getSemantics().singular());
@@ -211,7 +215,13 @@ public class RandomGeneratorAdapter {
 
   private void makeEvents(Urn urn, Data.Builder builder, Geometry geometry) {}
 
-  private void makeData(Urn urn, Data.Builder builder, Geometry geometry) {}
+  private void makeData(Urn urn, Data.Builder builder, Geometry geometry) {
+    var distribution = getDistribution(urn);
+    var filler = builder.filler(Data.DoubleFiller.class);
+    for (int i = 0; i < geometry.size(); i++) {
+      filler.add(sample(distribution));
+    }
+  }
 
   private synchronized Object getAttributeValue(String string) {
     if (Utils.Numbers.encodesDouble(string) || Utils.Numbers.encodesLong(string)) {
@@ -233,6 +243,15 @@ public class RandomGeneratorAdapter {
       return (double) ((IntegerDistribution) distribution).sample();
     }
     return null;
+  }
+
+  private double sample(Object distribution) {
+    if (distribution instanceof RealDistribution) {
+      return ((RealDistribution) distribution).sample();
+    } else if (distribution instanceof IntegerDistribution) {
+      return (double) ((IntegerDistribution) distribution).sample();
+    }
+    return Double.NaN;
   }
 
   private Object getDistribution(Urn urn) {
@@ -454,7 +473,7 @@ public class RandomGeneratorAdapter {
             + "shape"
             + "=00000000030000000100000005C0522AF2DBCA0987400C8361185B1480C052CE99DBCA0987400C8361185B1480C052CE99DBCA098740153636BF7AE340C0522AF2DBCA098740153636BF7AE340C0522AF2DBCA0987400C8361185B1480,proj=EPSG:4326}";
 
-    var observable = Observable.objects();
+    var observable = Observable.objects("porquerolles");
     var geometry = Geometry.create(centralColombia);
     var builder = Data.builder("colombia", observable, geometry);
     var adapter = new RandomGeneratorAdapter();
