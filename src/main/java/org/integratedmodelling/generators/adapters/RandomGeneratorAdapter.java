@@ -217,7 +217,7 @@ public class RandomGeneratorAdapter {
 
   private void makeData(Urn urn, Data.Builder builder, Geometry geometry) {
     var distribution = getDistribution(urn);
-    var filler = builder.filler(Data.DoubleFiller.class);
+    var filler = builder.filler(Data.DoubleFiller.class, Data.FillCurve.D1_LINEAR);
     for (int i = 0; i < geometry.size(); i++) {
       filler.add(sample(distribution));
     }
@@ -265,7 +265,7 @@ public class RandomGeneratorAdapter {
       tokens.add(urn.getParameters().get("p" + i));
     }
 
-    return getDistribution(tokens.toArray(new String[tokens.size()]));
+    return getDistribution(tokens.toArray(new String[0]));
   }
 
   public synchronized Object getDistribution(String[] tokens) {
