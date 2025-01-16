@@ -217,7 +217,7 @@ public class RandomGeneratorAdapter {
 
   private void makeData(Urn urn, Data.Builder builder, Geometry geometry) {
     var distribution = getDistribution(urn);
-    var filler = builder.filler(Data.DoubleFiller.class, Data.FillCurve.D1_LINEAR);
+    var filler = builder.filler(Data.DoubleFiller.class, Data.FillCurve.DN_LINEAR);
     for (int i = 0; i < geometry.size(); i++) {
       filler.add(sample(distribution));
     }
