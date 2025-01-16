@@ -34,15 +34,14 @@ public class TerrainGenerators {
         @KlabFunction.Argument(
             name = "range",
             type = Type.RANGE,
-            description = "The  " + "min-max range of the values produced. Default is 0 to 4000",
+            description = "The min-max range of the values produced. Default is 0 to 4000",
             optional = true),
         @KlabFunction.Argument(
             name = "detail",
             type = Type.NUMBER,
             description =
                 "Controls the amount of detail in the generated structure. Default is 8, "
-                    + "appropriate "
-                    + "for geographical elevation",
+                    + "appropriate for geographical elevation",
             optional = true),
         @KlabFunction.Argument(
             name = "roughness",
@@ -76,12 +75,16 @@ public class TerrainGenerators {
      */
     for (Geometry subscale : scale.without(Dimension.Type.SPACE)) {
 
+      // this scale has every dimension localized except space
+      var spaceScale = scale.at(subscale);
       // choose the fill curve that best represents the problem
-      var buffer = storage.buffer(subscale, Data.FillCurve.D2_XY).filler(Data.DoubleFiller.class);
+      var filler = storage.buffer(spaceScale, Data.FillCurve.D2_XY).filler(Data.DoubleFiller.class);
+      double dx = 1.0 / (double) xx;
+      double dy = 1.0 / (double) yy;
 
       for (int x = 0; x < xx; x++) {
         for (int y = 0; y < yy; y++) {
-          buffer.add(terrain.getAltitude(x, y));
+          filler.add(terrain.getAltitude(x * dx, y * dy));
         }
       }
     }
