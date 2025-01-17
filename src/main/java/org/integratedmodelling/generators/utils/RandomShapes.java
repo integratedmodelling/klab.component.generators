@@ -128,22 +128,4 @@ public class RandomShapes {
     return ShapeImpl.create(poly, projection);
   }
 
-  //    public static void main(String[] args) {
-  //
-  //        String tzShape = "EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796
-  // -9
-  //        .41, 33.796 -7.086))";
-  //        IShape context = Shape.create(tzShape);
-  //        SpatialDisplay display = new SpatialDisplay(Scale.create(context));
-  //        int n = 1;
-  //        for (IShape shape : INSTANCE.create(context.getEnvelope(), 4, 3, 1, 5)) {
-  //            System.out.println((n++) + " [area=" + shape.getArea(Units.INSTANCE.SQUARE_METERS) +
-  // "] :
-  //            " + shape);
-  //            display.add(shape, "Random polygons v=5");
-  //        }
-  //
-  //        display.show();
-  //
-  //    }
 }

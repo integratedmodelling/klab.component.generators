@@ -3,26 +3,25 @@ package org.integratedmodelling.generators.terrain;
 import java.util.Random;
 
 /**
- * Terrain generation using the diamond-square algorithm (Fournier et al. 1982) From
- * http://www.javaworld.com/article/2076745/learn-java/3d-graphic-java--render-fractal-landscapes.html
- * 
+ * Terrain generation using the diamond-square algorithm (Fournier et al. 1982) From <a
+ * href="http://www.javaworld.com/article/2076745/learn-java/3d-graphic-java--render-fractal-landscapes.html">...</a>
+ *
  * @author Merlin Hughes
  * @author Ferd
- *
  */
 public class Terrain {
 
   private double[][] terrain;
-  private double     min, max;
-  private int        divisions;
-  private Random     rng;
-  private double     rangeMin, rangeMax;
+  private double min, max;
+  private int divisions;
+  private Random rng;
+  private double rangeMin, rangeMax;
 
   /**
    * @param lod level of detail (number of iterations)
    * @param roughness (0 to 1)
-   * @param rangeMin 
-   * @param rangeMax 
+   * @param rangeMin
+   * @param rangeMax
    */
   public Terrain(int lod, double roughness, double rangeMin, double rangeMax) {
     this.rangeMin = rangeMin;
@@ -38,28 +37,28 @@ public class Terrain {
     for (int i = 0; i < lod; ++i) {
       int r = 1 << (lod - i), s = r >> 1;
       for (int j = 0; j < divisions; j += r)
-        for (int k = 0; k < divisions; k += r)
-          diamond(j, k, r, rough);
+        for (int k = 0; k < divisions; k += r) diamond(j, k, r, rough);
       if (s > 0)
         for (int j = 0; j <= divisions; j += s)
-          for (int k = (j + s) % r; k <= divisions; k += r)
-            square(j - s, k - s, r, rough);
+          for (int k = (j + s) % r; k <= divisions; k += r) square(j - s, k - s, r, rough);
       rough *= roughness;
     }
     min = max = terrain[0][0];
     for (int i = 0; i <= divisions; ++i)
       for (int j = 0; j <= divisions; ++j)
-        if (terrain[i][j] < min)
-          min = terrain[i][j];
-        else if (terrain[i][j] > max)
-          max = terrain[i][j];
+        if (terrain[i][j] < min) min = terrain[i][j];
+        else if (terrain[i][j] > max) max = terrain[i][j];
   }
 
   private void diamond(int x, int y, int side, double scale) {
     if (side > 1) {
       int half = side / 2;
-      double avg = (terrain[x][y] + terrain[x + side][y] + terrain[x + side][y + side]
-          + terrain[x][y + side]) * 0.25;
+      double avg =
+          (terrain[x][y]
+                  + terrain[x + side][y]
+                  + terrain[x + side][y + side]
+                  + terrain[x][y + side])
+              * 0.25;
       terrain[x + half][y + half] = avg + rnd() * scale;
     }
   }
@@ -92,7 +91,7 @@ public class Terrain {
 
   /**
    * Use to obtain values from normalized cell coordinates.
-   * 
+   *
    * @param i 0-1
    * @param j 0-1
    * @return the altitude at normalized coordinates
@@ -101,5 +100,4 @@ public class Terrain {
     double alt = terrain[(int) (i * divisions)][(int) (j * divisions)];
     return rangeMin + ((rangeMax - rangeMin) * (alt - min) / (max - min));
   }
-
 }
