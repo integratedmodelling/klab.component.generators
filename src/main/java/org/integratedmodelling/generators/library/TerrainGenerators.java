@@ -78,7 +78,10 @@ public class TerrainGenerators {
       // this scale has every dimension localized except space
       var spaceScale = scale.at(subscale);
       // choose the fill curve that best represents the problem
-      var filler = storage.buffer(spaceScale, Data.FillCurve.D2_XY).filler(Data.DoubleFiller.class);
+      var filler =
+          storage
+              .buffer(spaceScale.size(), Data.FillCurve.D2_XY, spaceScale.getExtentOffsets())
+              .filler(Data.DoubleFiller.class);
       double dx = 1.0 / (double) xx;
       double dy = 1.0 / (double) yy;
 
