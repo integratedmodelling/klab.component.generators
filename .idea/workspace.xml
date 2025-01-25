@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="10b76718-7636-41dd-92b5-89dc7be078fc" name="Changes" comment="Nothing">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/integratedmodelling/generators/library/TerrainGenerators.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/integratedmodelling/generators/library/TerrainGenerators.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,6 +44,7 @@
     <setting file="jar://$MAVEN_REPOSITORY$/org/integratedmodelling/klab.core.api/0.11.0-SNAPSHOT/klab.core.api-0.11.0-SNAPSHOT-sources.jar!/org/integratedmodelling/klab/api/knowledge/observation/scale/space/Shape.java" root0="SKIP_INSPECTION" />
     <setting file="jar://$MAVEN_REPOSITORY$/org/integratedmodelling/klab.core.common/0.11.0-SNAPSHOT/klab.core.common-0.11.0-SNAPSHOT-sources.jar!/org/integratedmodelling/common/knowledge/ConceptImpl.java" root0="SKIP_INSPECTION" />
     <setting file="jar://$MAVEN_REPOSITORY$/org/integratedmodelling/klab.core.common/0.11.0-SNAPSHOT/klab.core.common-0.11.0-SNAPSHOT-sources.jar!/org/integratedmodelling/klab/common/data/Instance.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$MAVEN_REPOSITORY$/org/integratedmodelling/klab.core.services/0.11.0-SNAPSHOT/klab.core.services-0.11.0-SNAPSHOT-sources.jar!/org/integratedmodelling/klab/extension/KlabComponent.java" root0="SKIP_INSPECTION" />
   </component>
   <component name="ProjectCodeStyleSettingsMigration">
     <option name="version" value="2" />
@@ -254,6 +255,17 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Add basic geospatial contextualizer" />
