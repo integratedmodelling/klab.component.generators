@@ -12,13 +12,15 @@ import org.integratedmodelling.klab.api.knowledge.observation.scale.Scale;
 import org.integratedmodelling.klab.api.lang.ServiceCall;
 import org.integratedmodelling.klab.api.services.runtime.extension.KlabFunction;
 import org.integratedmodelling.klab.api.services.runtime.extension.Library;
+import org.integratedmodelling.klab.runtime.storage.DoubleBuffer;
 import org.integratedmodelling.klab.runtime.storage.DoubleStorage;
 
 @Library(
     name = "klab.generators.geospatial",
     description =
         """
-        Contextualizers that generate realistic-looking geographic terrains and features for stress-testing. Use only on small S2 geometries.""")
+        Contextualizers that generate realistic-looking geographic terrains and features for stress-testing.
+        Use only on small S2 geometries.""")
 public class TerrainGenerators {
 
   @KlabFunction(
@@ -30,6 +32,8 @@ public class TerrainGenerators {
             elevation or slope. As the generator works in RAM, this should not be used on very large grids.""",
       geometry = "S2",
       type = Type.NUMBER,
+      split = 1, // FIXME this should be unnecessary because of the single DoubleBuffer arg
+      fillingCurve = Data.SpaceFillingCurve.D2_XY,
       parameters = {
         @KlabFunction.Argument(
             name = "range",
@@ -52,7 +56,7 @@ public class TerrainGenerators {
                     + " for geographical elevation",
             optional = true)
       })
-  public void generateTerrain(DoubleStorage storage, Scale scale, ServiceCall call) {
+  public void generateTerrain(DoubleBuffer storage, Scale scale, ServiceCall call) {
 
     var range = call.getParameters().get("range", NumericRange.create(0., 4000., false, false));
     var xy = scale.getSpace().getShape();
@@ -78,16 +82,12 @@ public class TerrainGenerators {
       // this scale has every dimension localized except space
       var spaceScale = scale.at(subscale);
       // choose the fill curve that best represents the problem
-      var filler =
-          storage
-              .buffer(spaceScale.size(), Data.FillCurve.D2_XY, spaceScale.getExtentOffsets())
-              .filler(Data.DoubleFiller.class);
       double dx = 1.0 / (double) xx;
       double dy = 1.0 / (double) yy;
 
       for (int x = 0; x < xx; x++) {
         for (int y = 0; y < yy; y++) {
-          filler.add(terrain.getAltitude(x * dx, y * dy));
+          storage.add(terrain.getAltitude(x * dx, y * dy));
         }
       }
     }

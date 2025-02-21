@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.scope.Scope;
 import org.integratedmodelling.klab.api.services.resources.adapters.ResourceAdapter;
 import org.integratedmodelling.klab.api.services.runtime.Notification;
 import org.integratedmodelling.klab.configuration.ServiceConfiguration;
+import org.integratedmodelling.klab.runtime.storage.DoubleBuffer;
 
 /**
  * Handles "klab:random:...." URNs. Produces various types of random data, objects, or events. The
@@ -217,7 +218,7 @@ public class RandomGeneratorAdapter {
 
   private void makeData(Urn urn, Data.Builder builder, Geometry geometry) {
     var distribution = getDistribution(urn);
-    var filler = builder.filler(Data.DoubleFiller.class, Data.FillCurve.DN_LINEAR);
+    var filler = builder.buffer(DoubleBuffer.class);
     for (int i = 0; i < geometry.size(); i++) {
       filler.add(sample(distribution));
     }
@@ -390,7 +391,7 @@ public class RandomGeneratorAdapter {
         break;
       case EXPONENTIAL:
         if (params.size() == 1) {
-          ret = new ExponentialDistribution(params.get(0));
+          ret = new ExponentialDistribution(params.getFirst());
         } else if (params.size() == 2) {
           ret = new ExponentialDistribution(params.get(0), params.get(1));
         }
