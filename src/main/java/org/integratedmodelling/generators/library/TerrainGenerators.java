@@ -2,9 +2,8 @@ package org.integratedmodelling.generators.library;
 
 import org.integratedmodelling.generators.terrain.Terrain;
 import org.integratedmodelling.klab.api.data.Data;
-import org.integratedmodelling.klab.api.data.Version;
+import org.integratedmodelling.klab.api.data.Storage;
 import org.integratedmodelling.klab.api.data.mediation.NumericRange;
-import org.integratedmodelling.klab.api.geometry.DimensionScanner2D;
 import org.integratedmodelling.klab.api.geometry.Geometry;
 import org.integratedmodelling.klab.api.geometry.Geometry.Dimension;
 import org.integratedmodelling.klab.api.knowledge.Artifact.Type;
@@ -12,8 +11,6 @@ import org.integratedmodelling.klab.api.knowledge.observation.scale.Scale;
 import org.integratedmodelling.klab.api.lang.ServiceCall;
 import org.integratedmodelling.klab.api.services.runtime.extension.KlabFunction;
 import org.integratedmodelling.klab.api.services.runtime.extension.Library;
-import org.integratedmodelling.klab.runtime.storage.DoubleBuffer;
-import org.integratedmodelling.klab.runtime.storage.DoubleStorage;
 
 @Library(
     name = "klab.generators.geospatial",
@@ -32,7 +29,7 @@ public class TerrainGenerators {
             elevation or slope. As the generator works in RAM, this should not be used on very large grids.""",
       geometry = "S2",
       type = Type.NUMBER,
-      split = 1, // FIXME this should be unnecessary because of the single DoubleBuffer arg
+      split = 1, // FIXME this should be unnecessary because the single DoubleBuffer arg should force it
       fillingCurve = Data.SpaceFillingCurve.D2_XY,
       parameters = {
         @KlabFunction.Argument(
@@ -56,7 +53,7 @@ public class TerrainGenerators {
                     + " for geographical elevation",
             optional = true)
       })
-  public void generateTerrain(DoubleBuffer storage, Scale scale, ServiceCall call) {
+  public void generateTerrain(Storage.DoubleBuffer storage, Scale scale, ServiceCall call) {
 
     var range = call.getParameters().get("range", NumericRange.create(0., 4000., false, false));
     var xy = scale.getSpace().getShape();
