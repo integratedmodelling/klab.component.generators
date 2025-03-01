@@ -5,6 +5,7 @@ import org.apache.commons.math3.distribution.*;
 import org.integratedmodelling.common.utils.Utils;
 import org.integratedmodelling.generators.utils.RandomShapes;
 import org.integratedmodelling.klab.api.data.Data;
+import org.integratedmodelling.klab.api.data.Storage;
 import org.integratedmodelling.klab.api.data.Version;
 import org.integratedmodelling.klab.api.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.api.exceptions.KlabUnimplementedException;
@@ -17,7 +18,6 @@ import org.integratedmodelling.klab.api.scope.Scope;
 import org.integratedmodelling.klab.api.services.resources.adapters.ResourceAdapter;
 import org.integratedmodelling.klab.api.services.runtime.Notification;
 import org.integratedmodelling.klab.configuration.ServiceConfiguration;
-import org.integratedmodelling.klab.runtime.storage.DoubleBuffer;
 
 /**
  * Handles "klab:random:...." URNs. Produces various types of random data, objects, or events. The
@@ -218,7 +218,7 @@ public class RandomGeneratorAdapter {
 
   private void makeData(Urn urn, Data.Builder builder, Geometry geometry) {
     var distribution = getDistribution(urn);
-    var filler = builder.buffer(DoubleBuffer.class);
+    var filler = builder.buffer(Storage.DoubleBuffer.class);
     for (int i = 0; i < geometry.size(); i++) {
       filler.add(sample(distribution));
     }
