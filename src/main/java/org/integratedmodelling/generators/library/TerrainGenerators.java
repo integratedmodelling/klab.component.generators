@@ -66,6 +66,7 @@ public class TerrainGenerators {
             range.getLowerBound(),
             range.getUpperBound());
 
+    var filler = storage.scan();
     /*
      * appropriate pattern for generic scale when we handle only one dimension, even if in most
      * situations (all at the moment) only one subscale will be returned. If there is no time or
@@ -84,7 +85,7 @@ public class TerrainGenerators {
 
       for (int x = 0; x < xx; x++) {
         for (int y = 0; y < yy; y++) {
-          storage.add(terrain.getAltitude(x * dx, y * dy));
+          filler.add(terrain.getAltitude(x * dx, y * dy));
         }
       }
     }
