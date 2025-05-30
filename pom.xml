@@ -6,7 +6,7 @@
     <parent>
         <artifactId>klab-services</artifactId>
         <groupId>org.integratedmodelling</groupId>
-        <version>0.11.0-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>klab.component.generators</artifactId>
     <version>1.0-SNAPSHOT</version>
