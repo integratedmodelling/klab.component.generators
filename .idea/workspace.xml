@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="10b76718-7636-41dd-92b5-89dc7be078fc" name="Changes" comment="Use new k.LAB version number">
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    <list default="true" id="10b76718-7636-41dd-92b5-89dc7be078fc" name="Changes" comment="Add AI-generated README.md">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -137,8 +137,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.26094.121" />
-        <option value="bundled-js-predefined-d6986cc7102b-b26f3e71634d-JavaScript-IU-251.26094.121" />
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.26927.53" />
+        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.26927.53" />
       </set>
     </attachedChunks>
   </component>
@@ -155,7 +155,8 @@
       <workItem from="1748597352501" duration="1669000" />
       <workItem from="1748599398366" duration="23000" />
       <workItem from="1750328622490" duration="1660000" />
-      <workItem from="1750334290173" duration="1187000" />
+      <workItem from="1750334290173" duration="1238000" />
+      <workItem from="1751292692817" duration="20000" />
     </task>
     <task id="LOCAL-00001" summary="Add basic geospatial contextualizer">
       <option name="closed" value="true" />
@@ -309,7 +310,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748599410556</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="Add AI-generated README.md">
+      <option name="closed" value="true" />
+      <created>1750661538427</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1750661538427</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -350,6 +359,7 @@
     <MESSAGE value="Nothing" />
     <MESSAGE value="API sync" />
     <MESSAGE value="Use new k.LAB version number" />
-    <option name="LAST_COMMIT_MESSAGE" value="Use new k.LAB version number" />
+    <MESSAGE value="Add AI-generated README.md" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add AI-generated README.md" />
   </component>
 </project>
