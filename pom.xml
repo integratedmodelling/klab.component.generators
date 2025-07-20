@@ -12,46 +12,29 @@
     <version>1.0-SNAPSHOT</version>
     <build>
         <plugins>
-<!--            <plugin>-->
-<!--                <artifactId>maven-shade-plugin</artifactId>-->
-<!--                <version>3.6.0</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <phase>package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>shade</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <artifactSet>-->
-<!--                                <excludes>-->
-<!--                                    <exclude>org.integratedmodelling:klab.core.services</exclude>-->
-<!--                                </excludes>-->
-<!--                            </artifactSet>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                        </manifest>
-                        <manifestEntries>
-                            <Plugin-Class>org.integratedmodelling.generators.GeneratorsPlugin</Plugin-Class>
-                            <Plugin-Id>klab.component.generators</Plugin-Id>
-                            <Plugin-Version>1.0-SNAPSHOT</Plugin-Version>
-<!--                            <Plugin-Requires>1.0.0</Plugin-Requires>-->
-<!--                            <Plugin-Dependencies>x, y, z</Plugin-Dependencies>-->
-                            <Plugin-Description>Autonomous observation generation for testing</Plugin-Description>
-                            <Plugin-Provider>Integrated Modelling Partnership</Plugin-Provider>
-                            <Plugin-License>*</Plugin-License>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
+                <groupId>org.integratedmodelling</groupId>
+                <artifactId>klab.product</artifactId>
+                <version>1.0.1-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>package-component</goal>
+                        </goals>
+                        <configuration>
+                            <componentName>klab.component.generators</componentName>
+                            <componentDescription>Self-contained observation generator resources and contextualizers for
+                                testing
+                            </componentDescription>
+                            <componentVendorName>Integrated Modelling Partnership</componentVendorName>
+                            <componentVendorEmail>info@integratedmodelling.org</componentVendorEmail>
+                            <componentLicenseName>GNU Affero GPL 3.0</componentLicenseName>
+                            <componentUsageRights>*</componentUsageRights>
+                            <componentClass>org.integratedmodelling.generators.GeneratorsPlugin</componentClass>
+                            <componentVersion>1.0-SNAPSHOT</componentVersion>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -81,7 +64,8 @@
 
     <scm>
         <connection>scm:git:http://github.com/integratedmodelling/klab.component.generators</connection>
-        <developerConnection>scm:git:https://github.com/integratedmodelling/klab.component.generators</developerConnection>
+        <developerConnection>scm:git:https://github.com/integratedmodelling/klab.component.generators
+        </developerConnection>
         <url>https://github.com/integratedmodelling/klab.component.generators.git</url>
     </scm>
 
