@@ -46,7 +46,7 @@ import org.integratedmodelling.klab.configuration.ServiceConfiguration;
  *
  * @author Ferd
  */
-@ResourceAdapter(name = "random", universal = true, version = Version.CURRENT)
+@ResourceAdapter(name = "random", universal = true, embeddable = true, version = Version.CURRENT)
 public class RandomGeneratorAdapter {
 
   private static final String POISSON = "poisson";
