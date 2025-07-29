@@ -1,6 +1,5 @@
 package org.integratedmodelling.generators.adapters;
 
-import java.util.*;
 import org.apache.commons.math3.distribution.*;
 import org.integratedmodelling.common.utils.Utils;
 import org.integratedmodelling.generators.utils.RandomShapes;
@@ -17,7 +16,8 @@ import org.integratedmodelling.klab.api.knowledge.observation.scale.Scale;
 import org.integratedmodelling.klab.api.scope.Scope;
 import org.integratedmodelling.klab.api.services.resources.adapters.ResourceAdapter;
 import org.integratedmodelling.klab.api.services.runtime.Notification;
-import org.integratedmodelling.klab.configuration.ServiceConfiguration;
+
+import java.util.*;
 
 /**
  * Handles "klab:random:...." URNs. Produces various types of random data, objects, or events. The
@@ -462,26 +462,4 @@ public class RandomGeneratorAdapter {
     };
   }
 
-  public static void main(String[] args) {
-
-    // This sets up the k.LAB environment for the service side
-    var ignored = ServiceConfiguration.INSTANCE.allowAnonymousUsage();
-
-    String centralColombia =
-        "τ0(1){ttype=LOGICAL,period=[1609459200000 1640995200000],tscope=1.0,"
-            + "tunit=YEAR}S2(934,631){bbox=[-75.2281407807369 -72.67107290964314 3.5641500380320963 5"
-            + ".302943221927137],"
-            + "shape"
-            + "=00000000030000000100000005C0522AF2DBCA0987400C8361185B1480C052CE99DBCA0987400C8361185B1480C052CE99DBCA098740153636BF7AE340C0522AF2DBCA098740153636BF7AE340C0522AF2DBCA0987400C8361185B1480,proj=EPSG:4326}";
-
-    var observable = Observable.objects("porquerolles");
-    var geometry = Geometry.create(centralColombia);
-    var builder = Data.builder("colombia", observable, geometry);
-    var adapter = new RandomGeneratorAdapter();
-
-    adapter.encode(Urn.of("klab:random:objects:polygons"), builder, geometry, observable, null);
-
-    var built = builder.build();
-    System.out.println(built);
-  }
 }
