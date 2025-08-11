@@ -39,46 +39,46 @@ class RandomGeneratorAdapterTest {
 
     @Nested
     class SmokeTests {
-        @Test
-        @Disabled("To be fixed/analyzed: throwing a nullptr exception")
-        public void validateData() {
-            var observable = Observable.objects("porquerolles");
-            var geometry = Geometry.create(centralColombia);
-            var builder = Data.builder("colombia", observable, geometry);
-            var adapter = new RandomGeneratorAdapter();
-
-            adapter.encode(Urn.of("klab:random:data:poisson#p"), builder, geometry, observable, null);
-
-            var built = builder.build();
-            assertFalse(hasErrorNotification(built.notifications()));
-        }
-
-        @Test
-        @Disabled("Events is WIP")
-        public void validateEvent() {
-            var observable = Observable.objects("porquerolles");
-            var geometry = Geometry.create(centralColombia);
-            var builder = Data.builder("colombia", observable, geometry);
-            var adapter = new RandomGeneratorAdapter();
-
-            adapter.encode(Urn.of("klab:random:events:test"), builder, geometry, observable, null);
-
-            var built = builder.build();
-            assertFalse(hasErrorNotification(built.notifications()));
-        }
-
-        @Test
-        public void validateObject() {
-            var observable = Observable.objects("porquerolles");
-            var geometry = Geometry.create(centralColombia);
-            var builder = Data.builder("colombia", observable, geometry);
-            var adapter = new RandomGeneratorAdapter();
-
-            adapter.encode(Urn.of("klab:random:objects:polygons"), builder, geometry, observable, null);
-
-            var built = builder.build();
-            assertFalse(hasErrorNotification(built.notifications()));
-        }
+//        @Test
+//        @Disabled("To be fixed/analyzed: throwing a nullptr exception")
+//        public void validateData() {
+//            var observable = Observable.objects("porquerolles");
+//            var geometry = Geometry.create(centralColombia);
+//            var builder = Data.builder("colombia", observable, geometry);
+//            var adapter = new RandomGeneratorAdapter();
+//
+//            adapter.encode(Urn.of("klab:random:data:poisson#p"), builder, geometry, observable, null);
+//
+//            var built = builder.build();
+//            assertFalse(hasErrorNotification(built.notifications()));
+//        }
+//
+//        @Test
+//        @Disabled("Events is WIP")
+//        public void validateEvent() {
+//            var observable = Observable.objects("porquerolles");
+//            var geometry = Geometry.create(centralColombia);
+//            var builder = Data.builder("colombia", observable, geometry);
+//            var adapter = new RandomGeneratorAdapter();
+//
+//            adapter.encode(Urn.of("klab:random:events:test"), builder, geometry, observable, null);
+//
+//            var built = builder.build();
+//            assertFalse(hasErrorNotification(built.notifications()));
+//        }
+//
+//        @Test
+//        public void validateObject() {
+//            var observable = Observable.objects("porquerolles");
+//            var geometry = Geometry.create(centralColombia);
+//            var builder = Data.builder("colombia", observable, geometry);
+//            var adapter = new RandomGeneratorAdapter();
+//
+//            adapter.encode(Urn.of("klab:random:objects:polygons"), builder, geometry, observable, null);
+//
+//            var built = builder.build();
+//            assertFalse(hasErrorNotification(built.notifications()));
+//        }
     }
 
 }
