@@ -46,7 +46,12 @@ import java.util.*;
  *
  * @author Ferd
  */
-@ResourceAdapter(name = "random", universal = true, embeddable = true, version = Version.CURRENT)
+@ResourceAdapter(
+    name = "random",
+    universal = true,
+    embeddable = true,
+    version = Version.CURRENT,
+    fillCurve = Data.SpaceFillingCurve.D1_LINEAR)
 public class RandomGeneratorAdapter {
 
   private static final String POISSON = "poisson";
@@ -218,7 +223,8 @@ public class RandomGeneratorAdapter {
 
   private void makeData(Urn urn, Data.Builder builder, Geometry geometry) {
     var distribution = getDistribution(urn);
-    var filler = builder.buffer(Storage.DoubleBuffer.class).scan();
+    var filler =
+        builder.buffer(Storage.DoubleBuffer.class, Data.SpaceFillingCurve.D1_LINEAR).scan();
     for (int i = 0; i < geometry.size(); i++) {
       filler.add(sample(distribution));
     }
@@ -461,5 +467,4 @@ public class RandomGeneratorAdapter {
           throw new KlabUnimplementedException("random adapter: can't handle URN " + resourceUrn);
     };
   }
-
 }
