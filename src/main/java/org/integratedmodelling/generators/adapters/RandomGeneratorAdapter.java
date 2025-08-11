@@ -46,12 +46,7 @@ import java.util.*;
  *
  * @author Ferd
  */
-@ResourceAdapter(
-    name = "random",
-    universal = true,
-    embeddable = true,
-    version = Version.CURRENT,
-    fillCurve = Data.SpaceFillingCurve.D1_LINEAR)
+@ResourceAdapter(name = "random", universal = true, embeddable = true, version = Version.CURRENT)
 public class RandomGeneratorAdapter {
 
   private static final String POISSON = "poisson";
@@ -221,6 +216,7 @@ public class RandomGeneratorAdapter {
 
   private void makeEvents(Urn urn, Data.Builder builder, Geometry geometry) {}
 
+  // TODO should just take the DoubleBuffer, as the fill curve and geometry doesn't matter
   private void makeData(Urn urn, Data.Builder builder, Geometry geometry) {
     var distribution = getDistribution(urn);
     var filler =
