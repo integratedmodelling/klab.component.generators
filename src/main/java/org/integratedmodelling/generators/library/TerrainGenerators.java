@@ -29,8 +29,8 @@ public class TerrainGenerators {
             elevation or slope. As the generator works in RAM, this should not be used on very large grids.""",
       geometry = "S2",
       type = Type.NUMBER,
-      split = 1, // FIXME this should be unnecessary because the single DoubleBuffer arg should force it
-      fillingCurve = Data.SpaceFillingCurve.D2_XY,
+      split = 1,
+      fillingCurve = Data.FillCurve.D2_XY,
       parameters = {
         @KlabFunction.Argument(
             name = "range",
@@ -53,7 +53,7 @@ public class TerrainGenerators {
                     + " for geographical elevation",
             optional = true)
       })
-  public void generateTerrain(Storage.DoubleBuffer storage, Scale scale, ServiceCall call) {
+  public void generateTerrain(Storage.DoubleScanner filler, Scale scale, ServiceCall call) {
 
     var range = call.getParameters().get("range", NumericRange.create(0., 4000., false, false));
     var xy = scale.getSpace().getShape();
@@ -66,7 +66,6 @@ public class TerrainGenerators {
             range.getLowerBound(),
             range.getUpperBound());
 
-    var filler = storage.scan();
     /*
      * appropriate pattern for generic scale when we handle only one dimension, even if in most
      * situations (all at the moment) only one subscale will be returned. If there is no time or
