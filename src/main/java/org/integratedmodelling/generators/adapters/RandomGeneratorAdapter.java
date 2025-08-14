@@ -138,9 +138,14 @@ public class RandomGeneratorAdapter {
 
   @ResourceAdapter.Encoder
   public void encode(
-      Urn urn, Data.Builder builder, Geometry geometry, Observable observable, Scope scope) {
+      Urn urn,
+      Storage.DoubleScanner filler,
+      Data.Builder builder,
+      Geometry geometry,
+      Observable observable,
+      Scope scope) {
     switch (urn.getNamespace()) {
-      case DATA -> makeData(urn, builder, geometry);
+      case DATA -> makeData(urn, filler);
       case EVENTS -> makeEvents(urn, builder, geometry);
       case OBJECTS -> makeObjects(urn, builder, geometry, observable, scope);
       default ->
@@ -216,12 +221,9 @@ public class RandomGeneratorAdapter {
 
   private void makeEvents(Urn urn, Data.Builder builder, Geometry geometry) {}
 
-  // TODO should just take the DoubleBuffer, as the fill curve and geometry doesn't matter
-  private void makeData(Urn urn, Data.Builder builder, Geometry geometry) {
+  private void makeData(Urn urn, Storage.DoubleScanner filler) {
     var distribution = getDistribution(urn);
-    var filler =
-        builder.buffer(Storage.DoubleBuffer.class, Data.SpaceFillingCurve.D1_LINEAR).scan();
-    for (int i = 0; i < geometry.size(); i++) {
+    for (int i = 0; i < filler.size(); i++) {
       filler.add(sample(distribution));
     }
   }
