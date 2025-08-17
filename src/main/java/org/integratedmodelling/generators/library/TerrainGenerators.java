@@ -30,7 +30,7 @@ public class TerrainGenerators {
       geometry = "S2",
       type = Type.NUMBER,
       split = 1,
-      fillingCurve = Data.FillCurve.D2_XY,
+      fillCurve = Data.FillCurve.D2_XY,
       parameters = {
         @KlabFunction.Argument(
             name = "range",
@@ -73,6 +73,9 @@ public class TerrainGenerators {
      * the loop, adapt the overall geometry located by each sub-scale to a grid scanner and use a
      * buffer for fast access to storage. The geometry requirement ensures that we get a regular 2D
      * spatial extent, so this is safe w/o error checking.
+     *
+     * FIXME this is probably unnecessary - the declared geometry guarantees that the scanner is
+     *  iterating only over space.
      */
     for (Geometry subscale : scale.without(Dimension.Type.SPACE)) {
 
