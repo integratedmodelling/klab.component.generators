@@ -27,10 +27,10 @@ public class TerrainGenerators {
             Generate fractal surfaces within a user-defined range \
             and with a configurable degree of smoothness, apt to simulating several terrain patterns such as \
             elevation or slope. As the generator works in RAM, this should not be used on very large grids.""",
-      geometry = "S2",
+      geometry = "S2", // filter for grids and extract the S2 geometry from the scale before calling
       type = Type.NUMBER,
       split = 1,
-      fillCurve = Data.FillCurve.D2_XY,
+      fillCurve = Data.FillCurve.D2_XY, // request a XY scanner over the data
       parameters = {
         @KlabFunction.Argument(
             name = "range",
@@ -53,6 +53,7 @@ public class TerrainGenerators {
                     + " for geographical elevation",
             optional = true)
       })
+  // TODO revise for simpler API - scanner & space dimension, curve etc. are all preset and prevalidated
   public void generateTerrain(Storage.DoubleScanner filler, Scale scale, ServiceCall call) {
 
     var range = call.getParameters().get("range", NumericRange.create(0., 4000., false, false));
@@ -80,7 +81,7 @@ public class TerrainGenerators {
     for (Geometry subscale : scale.without(Dimension.Type.SPACE)) {
 
       // this scale has every dimension localized except space
-      var spaceScale = scale.at(subscale);
+//      var spaceScale = scale.at(subscale);
       // choose the fill curve that best represents the problem
       double dx = 1.0 / (double) xx;
       double dy = 1.0 / (double) yy;
