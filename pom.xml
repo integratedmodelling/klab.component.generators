@@ -32,6 +32,10 @@
                             <componentUsageRights>*</componentUsageRights>
                             <componentClass>org.integratedmodelling.generators.GeneratorsPlugin</componentClass>
                             <componentVersion>1.0-SNAPSHOT</componentVersion>
+                            <hostRuntimeArtifacts>
+                                org.integratedmodelling:klab.service.runtime.server:1.0.0-SNAPSHOT,
+                                org.integratedmodelling:klab.service.resources.server:1.0.0-SNAPSHOT
+                            </hostRuntimeArtifacts>
                         </configuration>
                     </execution>
                 </executions>
