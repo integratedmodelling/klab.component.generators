@@ -5,6 +5,7 @@ import org.integratedmodelling.klab.api.knowledge.Artifact;
 import org.integratedmodelling.klab.api.knowledge.Concept;
 import org.integratedmodelling.klab.api.knowledge.Observable;
 import org.integratedmodelling.klab.api.knowledge.SemanticType;
+import org.integratedmodelling.klab.api.knowledge.SemanticRole;
 import org.integratedmodelling.klab.api.lang.ServiceCall;
 import org.integratedmodelling.klab.api.scope.Scope;
 import org.integratedmodelling.klab.api.services.Reasoner;
@@ -29,8 +30,11 @@ public class RandomContextualizers {
       type = Artifact.Type.CONCEPT)
   public static Concept generateConcept(Observable observable, ServiceCall call, Scope scope) {
 
+    // The runtime supplies the full directive; this classifier chooses the predicate family.
+    var predicate = observable.builder(scope).without(SemanticRole.INHERENT).buildConcept();
+
     var concreteChildren =
-        scope.getService(Reasoner.class).closure(observable).stream()
+        scope.getService(Reasoner.class).closure(predicate).stream()
             .filter(c -> !c.is(SemanticType.ABSTRACT))
             .toList();
     if (concreteChildren.size() == 0) {
