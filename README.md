@@ -63,11 +63,35 @@ elevation = terrain(
 - Must be used with S2 (spatial 2D) geometries
 - Recommended for small to medium grid sizes due to memory usage
 
+### Random relationship and bond contextualizer
+
+Use `klab.generators.random.relationships(percentage = 20, seed = 42)` as the
+implementation of a collective relationship/bond model. The Tier-0 CONNECTION
+strategy resolves and binds its `source` and `target` collective inputs.
+
+The generator samples `round(pool size * percentage / 100)` distinct members from
+each input pool, then connects each selected source to one randomly chosen,
+different selected target. Targets may be reused. Self-connections are excluded;
+bonds also exclude reversed duplicates. Empty samples produce no observations.
+
+Parameters:
+
+- `percentage`: 0 through 100, default 20; applies to endpoint sampling, not all possible pairs.
+- `seed`: optional integer; repeats endpoint selection, geometry and identities for the same inputs.
+- `shape`: `lines` (default), `points`, or `polygons`.
+- `vertices`: polygon hull vertex sample count, default 5, between 3 and 10000.
+
+Random geometries are synthetic shapes within the current observation envelope,
+with the observation's temporal extent retained. They do not trace real routes.
+Every output is an individual relationship observation with an identity and two
+participants. Runtime stores it in a cohort and acknowledges it using
+`ContextScope.between(...)`; this generator does not resolve its own outputs.
+
 ## Technical Details
 
 ### Architecture
-- **Plugin Framework**: Built on PF4J plugin architecture
-- **k.LAB Integration**: Extends `KlabComponent` for seamless integration
+- **Plugin Framework**: Built on PF4J plugin architecture with k.LAB conventions
+- **k.LAB Integration**: Extends `KlabComponent`; packaged by `klab.product` Maven plugin
 - **Java 21**: Leverages modern Java features and performance improvements
 
 ### Algorithms
@@ -128,3 +152,5 @@ For questions, issues, or contributions, please visit the [k.LAB community resou
 ---
 
 *This component is part of the k.LAB semantic modeling platform for integrated assessment and environmental modeling.*
+
+
