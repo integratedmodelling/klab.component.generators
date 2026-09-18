@@ -34,9 +34,9 @@ public final class RandomRelationships {
     if (!observable.is(SemanticType.RELATIONSHIP) || !observable.getSemantics().isCollective())
       throw new IllegalArgumentException(
           "Random relationships require a collective relationship or bond");
-    double percentage = call.getParameters().get("percentage", 20.0);
+    double percentage = call.getParameters().get("fraction", 20.0);
     if (!Double.isFinite(percentage) || percentage < 0 || percentage > 100)
-      throw new IllegalArgumentException("Endpoint percentage must be between 0 and 100");
+      throw new IllegalArgumentException("Endpoint fraction must be between 0 and 100");
     String shape = call.getParameters().get("shape", "lines");
     if (!Set.of("lines", "points", "polygons").contains(shape))
       throw new IllegalArgumentException("Unknown random relationship shape: " + shape);

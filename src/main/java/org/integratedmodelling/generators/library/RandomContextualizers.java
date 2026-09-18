@@ -34,7 +34,7 @@ public class RandomContextualizers {
       type = Artifact.Type.RELATIONSHIP,
       parameters = {
         @KlabFunction.Argument(
-            name = "percentage",
+            name = "fraction",
             type = Artifact.Type.NUMBER,
             optional = true,
             description = "Percentage of each endpoint pool to sample (0..100, default 20)."),

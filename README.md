@@ -65,18 +65,18 @@ elevation = terrain(
 
 ### Random relationship and bond contextualizer
 
-Use `klab.generators.random.relationships(percentage = 20, seed = 42)` as the
+Use `klab.generators.random.relationships(fraction = 20, seed = 42)` as the
 implementation of a collective relationship/bond model. The Tier-0 CONNECTION
 strategy resolves and binds its `source` and `target` collective inputs.
 
-The generator samples `round(pool size * percentage / 100)` distinct members from
+The generator samples `round(pool size * fraction / 100)` distinct members from
 each input pool, then connects each selected source to one randomly chosen,
 different selected target. Targets may be reused. Self-connections are excluded;
 bonds also exclude reversed duplicates. Empty samples produce no observations.
 
 Parameters:
 
-- `percentage`: 0 through 100, default 20; applies to endpoint sampling, not all possible pairs.
+- `fraction`: 0 through 100, default 20; applies to endpoint sampling, not all possible pairs.
 - `seed`: optional integer; repeats endpoint selection, geometry and identities for the same inputs.
 - `shape`: `lines` (default), `points`, or `polygons`.
 - `vertices`: polygon hull vertex sample count, default 5, between 3 and 10000.
