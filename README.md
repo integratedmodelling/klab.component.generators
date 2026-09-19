@@ -77,15 +77,115 @@ bonds also exclude reversed duplicates. Empty samples produce no observations.
 Parameters:
 
 - `fraction`: 0 through 100, default 20; applies to endpoint sampling, not all possible pairs.
-- `seed`: optional integer; repeats endpoint selection, geometry and identities for the same inputs.
-- `shape`: `lines` (default), `points`, or `polygons`.
-- `vertices`: polygon hull vertex sample count, default 5, between 3 and 10000.
+- `seed`: optional integer; repeats endpoint selection, pairing and identities for the same inputs.
 
-Random geometries are synthetic shapes within the current observation envelope,
-with the observation's temporal extent retained. They do not trace real routes.
-Every output is an individual relationship observation with an identity and two
-participants. Runtime stores it in a cohort and acknowledges it using
-`ContextScope.between(...)`; this generator does not resolve its own outputs.
+Relationship geometry is derived from the paired endpoint observations after
+transforming both shapes to the current observation projection:
+
+- Two point geometries are joined by a straight line from source to target.
+- For line geometries, the closest pair among their start and end points is
+  joined. The same rule handles point/line pairs and multipart point or line
+  geometries.
+- If either endpoint is a polygon or multipolygon, the result is the smallest
+  convex hull covering both complete endpoint geometries.
+
+The generated spatial shape replaces the space in the current scale, so other
+dimensions such as time are retained. Every endpoint must have a non-empty
+spatial point, line or polygon shape; generation fails if an endpoint has no
+usable spatial geometry. Every output is an individual relationship observation
+with an identity and two participants. Runtime stores it in a cohort and
+acknowledges it using `ContextScope.between(...)`; this generator does not
+resolve its own outputs.
+
+### `klab:random:...` URN adapter
+
+The universal `random` resource adapter accepts URNs in this form:
+
+```text
+klab:random:<namespace>:<resource-id>#<key>=<value>&...
+```
+
+The encoder dispatches on `<namespace>`, which may be `data`, `objects` or
+`events`.
+
+#### Numeric data
+
+`klab:random:data:<distribution>` fills every position in the requested numeric
+storage with an independent sample. Distribution arguments are positional URN
+parameters named `p0`, `p1`, and so on; numbering must be contiguous. For
+example:
+
+```text
+klab:random:data:gaussian#p0=10&p1=2
+klab:random:data:poisson#p0=4
+klab:random:data:uniform#p0=-1&p1=1
+```
+
+The implemented distributions and accepted argument counts are:
+
+| Resource ID | Arguments (`p0`, `p1`, ...) |
+| --- | --- |
+| `uniform` | none, or lower bound and upper bound |
+| `lognormal` | none, or scale and shape |
+| `gaussian` | none, or mean and standard deviation |
+| `weibull` | shape and scale, optionally inverse-CDF accuracy |
+| `triangular` | lower bound, mode and upper bound |
+| `cauchy` | none, or median and scale, optionally inverse-CDF accuracy |
+| `beta` | alpha and beta, optionally inverse-CDF accuracy |
+| `t` | degrees of freedom, optionally inverse-CDF accuracy |
+| `f` | numerator and denominator degrees of freedom, optionally inverse-CDF accuracy |
+| `exponential` | mean, optionally inverse-CDF accuracy |
+| `binomial` | number of trials and success probability |
+| `hypergeometric` | population size, number of successes and sample size |
+| `pascal` | number of successes and success probability |
+| `poisson` | none (mean 1), mean, or mean and convergence epsilon |
+
+Unknown distributions, nonnumeric arguments, and unsupported argument counts
+raise an error. Distribution instances are cached by name and arguments. The
+adapter does not accept a seed, so repeated calls are not reproducible.
+
+#### Spatial objects
+
+`klab:random:objects:<shape>` creates individual objects within the requested
+spatial envelope. `<shape>` is `points`, `lines` or `polygons`:
+
+```text
+klab:random:objects:points#fraction=0.1&xdivs=20&ydivs=20
+klab:random:objects:polygons#fraction=0.3&vertices=8
+```
+
+The envelope is divided into an approximate grid and at most one shape is
+generated per cell, so generated objects do not overlap. Supported generation
+parameters are:
+
+- `fraction`: probability of generating a shape in each cell, default `0.2`.
+  This is a probability from 0 to 1, unlike the relationship contextualizer's
+  percentage.
+- `xdivs`, `ydivs`: approximate grid divisions, each defaulting to `10`.
+- `vertices`: points use one vertex and lines use two; for polygons this sets
+  the convex-hull sample count and defaults to `5`.
+
+If either grid dimension is `1`, the current implementation creates one shape
+over the entire envelope and does not apply `fraction`. No objects are emitted
+for a non-spatial geometry. Parameter values are parsed directly and are not
+range-validated.
+
+Additional, non-reserved parameters become object metadata when their value is
+either numeric or a supported distribution call such as `gaussian(10,2)`; one
+sample is stored per generated object. The reserved names `fraction`, `xdivs`,
+`ydivs`, `vertices`, `std`, `grid`, `p0` through `p3`, `duration`, and `start`
+are not copied to metadata. Of these, only `fraction`, `xdivs`, `ydivs`, and
+`vertices` currently affect object generation.
+
+#### Events and current limitations
+
+The `events` namespace is dispatched but is not implemented, so
+`klab:random:events:...` currently emits no events. An unknown namespace adds an
+error notification to the data builder. The adapter's type-inference hook also
+currently compares the resource ID with `data`, `events`, and `objects` instead
+of comparing the namespace; consequently it cannot infer a type from the
+four-part URNs documented above and throws an unimplemented-operation error if
+that hook is invoked.
 
 ## Technical Details
 

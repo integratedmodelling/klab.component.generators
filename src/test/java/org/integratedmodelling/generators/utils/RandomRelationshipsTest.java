@@ -16,7 +16,11 @@ import org.integratedmodelling.klab.api.knowledge.observation.scale.Scale;
 import org.integratedmodelling.klab.api.scope.ContextScope;
 import org.integratedmodelling.klab.api.services.RuntimeService;
 import org.integratedmodelling.klab.configuration.ServiceConfiguration;
+import org.integratedmodelling.klab.runtime.scale.space.ShapeImpl;
 import org.junit.jupiter.api.*;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.io.WKTReader;
 
 class RandomRelationshipsTest {
   @BeforeAll static void setup() { ServiceConfiguration.injectInstantiators(); }
@@ -31,10 +35,17 @@ class RandomRelationshipsTest {
     concept.setType(types); concept.setCollective(collective);
     var observable = new ObservableImpl(); observable.setSemantics(concept); observable.setUrn(concept.getUrn());
     var observation = new ObservationImpl(); observation.setId(id); observation.setUrn("test:instance" + id);
-    observation.setObservable(observable); return observation;
+    observation.setObservable(observable);
+    if (id > 0) {
+      double x = id % 10 - 5;
+      double y = 40 + id / 10;
+      observation.setGeometry(Scale.create(ShapeImpl.create(
+          "EPSG:4326 POINT (" + x + " " + y + ")")));
+    }
+    return observation;
   }
 
-  private List<Emitted> generate(double percentage, long seed, String shape, boolean bond, boolean overlapping) {
+  private List<Emitted> generate(double percentage, long seed, boolean bond, boolean overlapping) {
     var source = observation(-1, false, true, false);
     var target = observation(-2, false, true, false);
     var relationship = observation(-3, true, true, bond);
@@ -48,8 +59,7 @@ class RandomRelationshipsTest {
     when(runtime.getMembers(source, scope)).thenReturn(sources);
     when(runtime.getMembers(target, scope)).thenReturn(targets);
     var call = new ServiceCallImpl();
-    call.getParameters().put("percentage", percentage); call.getParameters().put("seed", seed);
-    call.getParameters().put("shape", shape);
+    call.getParameters().put("fraction", percentage); call.getParameters().put("seed", seed);
     Geometry geometry = Scale.create(org.integratedmodelling.klab.runtime.scale.space.ShapeImpl.create(
         "EPSG:4326 POLYGON ((-5 40, 5 40, 5 45, -5 45, -5 40))"));
     var builder = mock(Data.Builder.class);
@@ -70,21 +80,19 @@ class RandomRelationshipsTest {
   }
 
   @Test void percentagesSelectTheExpectedNumberOfSources() {
-    assertEquals(0, generate(0, 42, "lines", false, false).size());
-    assertEquals(3, generate(30, 42, "lines", false, false).size());
-    assertEquals(10, generate(100, 42, "lines", false, false).size());
+    assertEquals(0, generate(0, 42, false, false).size());
+    assertEquals(3, generate(30, 42, false, false).size());
+    assertEquals(10, generate(100, 42, false, false).size());
   }
 
-  @Test void seedsReproducePairsAndGeometryAcrossAllShapeKinds() {
-    for (var shape : List.of("points", "lines", "polygons")) {
-      assertEquals(generate(50, 42, shape, false, false), generate(50, 42, shape, false, false));
-      assertNotEquals(generate(50, 42, shape, false, false), generate(50, 43, shape, false, false));
-    }
+  @Test void seedsReproducePairsAndGeometry() {
+    assertEquals(generate(50, 42, false, false), generate(50, 42, false, false));
+    assertNotEquals(generate(50, 42, false, false), generate(50, 43, false, false));
   }
 
   @Test void overlappingBondInputsProduceNeitherSelfLinksNorReversedDuplicates() {
     var pairs = new HashSet<Set<Long>>();
-    for (var result : generate(100, 42, "lines", true, true)) {
+    for (var result : generate(100, 42, true, true)) {
       assertNotEquals(result.source(), result.target());
       assertTrue(pairs.add(Set.of(result.source(), result.target())));
     }
@@ -92,12 +100,39 @@ class RandomRelationshipsTest {
 
   @Test void invalidPercentagesAreRejected() {
     for (double percentage : new double[] {-1, 101, Double.NaN, Double.POSITIVE_INFINITY})
-      assertThrows(IllegalArgumentException.class, () -> generate(percentage, 42, "lines", false, false));
+      assertThrows(IllegalArgumentException.class, () -> generate(percentage, 42, false, false));
   }
 
   @Test void samplingDeduplicatesAndRoundsSmallPools() {
     var endpoint = observation(1, false, false, false);
     assertEquals(1, RandomRelationships.sample(List.of(endpoint, endpoint), 100, new Random(42)).size());
     assertEquals(0, RandomRelationships.sample(List.of(endpoint), 20, new Random(42)).size());
+  }
+
+  @Test void pointEndpointsAreConnectedDirectly() {
+    var factory = new GeometryFactory();
+    var result = RandomRelationships.relationshipGeometry(
+        factory.createPoint(new Coordinate(1, 2)),
+        factory.createPoint(new Coordinate(4, 6)));
+
+    assertEquals("LINESTRING (1 2, 4 6)", result.toText());
+  }
+
+  @Test void lineEndpointsUseTheClosestPairOfEnds() throws Exception {
+    var reader = new WKTReader();
+    var result = RandomRelationships.relationshipGeometry(
+        reader.read("LINESTRING (0 0, 10 0)"),
+        reader.read("LINESTRING (8 3, 20 3)"));
+
+    assertEquals("LINESTRING (10 0, 8 3)", result.toText());
+  }
+
+  @Test void aPolygonEndpointProducesTheCombinedConvexHull() throws Exception {
+    var reader = new WKTReader();
+    var result = RandomRelationships.relationshipGeometry(
+        reader.read("POLYGON ((0 0, 2 0, 2 2, 0 2, 0 0))"),
+        reader.read("LINESTRING (3 1, 4 1)"));
+
+    assertTrue(result.equalsTopo(reader.read("POLYGON ((0 0, 2 0, 4 1, 2 2, 0 2, 0 0))")));
   }
 }

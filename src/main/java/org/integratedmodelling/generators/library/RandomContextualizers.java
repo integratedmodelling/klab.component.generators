@@ -29,7 +29,7 @@ public class RandomContextualizers {
   @KlabFunction(
       name = "relationships",
       description =
-          "Select a percentage of each endpoint input and generate random relationship or bond observations.",
+          "Select a percentage of each endpoint input and connect paired observations using their spatial geometry.",
       geometry = "*",
       type = Artifact.Type.RELATIONSHIP,
       parameters = {
@@ -42,17 +42,7 @@ public class RandomContextualizers {
             name = "seed",
             type = Artifact.Type.NUMBER,
             optional = true,
-            description = "Optional random seed for repeatable endpoint selection and geometry."),
-        @KlabFunction.Argument(
-            name = "shape",
-            type = Artifact.Type.TEXT,
-            optional = true,
-            description = "Random geometry: lines (default), points, or polygons."),
-        @KlabFunction.Argument(
-            name = "vertices",
-            type = Artifact.Type.NUMBER,
-            optional = true,
-            description = "Number of random vertices for polygon hulls (default 5, minimum 3).")
+            description = "Optional random seed for repeatable endpoint selection and pairing.")
       })
   public static void generateRelationships(
       Data.Builder builder,

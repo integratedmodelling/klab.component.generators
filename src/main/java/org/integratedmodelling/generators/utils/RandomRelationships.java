@@ -13,13 +13,11 @@ import org.integratedmodelling.klab.api.lang.ServiceCall;
 import org.integratedmodelling.klab.api.scope.ContextScope;
 import org.integratedmodelling.klab.api.services.RuntimeService;
 import org.integratedmodelling.klab.runtime.scale.space.ShapeImpl;
-import org.locationtech.jts.algorithm.ConvexHull;
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
 
-/**
- * Synthetic connection generator: endpoint sampling, pair selection, and geometry share one RNG.
- */
+/** Synthetic connection generator with random endpoint sampling and geometry-aware connections. */
 public final class RandomRelationships {
   private RandomRelationships() {}
 
@@ -37,12 +35,6 @@ public final class RandomRelationships {
     double percentage = call.getParameters().get("fraction", 20.0);
     if (!Double.isFinite(percentage) || percentage < 0 || percentage > 100)
       throw new IllegalArgumentException("Endpoint fraction must be between 0 and 100");
-    String shape = call.getParameters().get("shape", "lines");
-    if (!Set.of("lines", "points", "polygons").contains(shape))
-      throw new IllegalArgumentException("Unknown random relationship shape: " + shape);
-    int vertices = call.getParameters().get("vertices", 5);
-    if (vertices < 3 || vertices > 10000)
-      throw new IllegalArgumentException("Polygon vertices must be between 3 and 10000");
     if (source == null || target == null)
       throw new IllegalArgumentException("Random relationships require source and target inputs");
     long seed = call.getParameters().get("seed", new Random().nextLong());
@@ -56,12 +48,8 @@ public final class RandomRelationships {
     if (scale.getSpace() == null)
       throw new IllegalArgumentException(
           "Random relationship geometry requires a spatial observation context");
-    var envelope = scale.getSpace().getEnvelope();
-    if (!(envelope.getMaxX() > envelope.getMinX()) || !(envelope.getMaxY() > envelope.getMinY()))
-      throw new IllegalArgumentException(
-          "Random relationship geometry requires a non-degenerate spatial envelope");
+    var projection = scale.getSpace().getEnvelope().getProjection();
     var individual = Observable.promote(observable.getSemantics().singular());
-    var factory = new GeometryFactory();
     var pairs = new HashSet<String>();
     for (var from : sources) {
       var candidates = targets.stream().filter(to -> to.getId() != from.getId()).toList();
@@ -75,23 +63,11 @@ public final class RandomRelationships {
       }
       String pair = first + "\n" + second;
       if (!pairs.add(pair)) continue;
-      int count = shape.equals("points") ? 1 : shape.equals("lines") ? 3 : vertices;
-      var coordinates = new Coordinate[count];
-      for (int i = 0; i < count; i++)
-        coordinates[i] =
-            new Coordinate(
-                envelope.getMinX()
-                    + random.nextDouble() * (envelope.getMaxX() - envelope.getMinX()),
-                envelope.getMinY()
-                    + random.nextDouble() * (envelope.getMaxY() - envelope.getMinY()));
-      var jts =
-          switch (shape) {
-            case "points" -> factory.createPoint(coordinates[0]);
-            case "lines" -> factory.createLineString(coordinates);
-            default -> new ConvexHull(coordinates, factory).getConvexHull();
-          };
+      var fromShape = endpointShape(from, projection);
+      var toShape = endpointShape(to, projection);
+      var jts = relationshipGeometry(fromShape.getJTSGeometry(), toShape.getJTSGeometry());
       var generated =
-          scale.with(ShapeImpl.create(jts, envelope.getProjection())).as(Geometry.class);
+          scale.with(ShapeImpl.create(jts, projection)).as(Geometry.class);
       var identity =
           UUID.nameUUIDFromBytes(
               (observable.getUrn() + "\n" + seed + "\n" + pair).getBytes(StandardCharsets.UTF_8));
@@ -103,6 +79,68 @@ public final class RandomRelationships {
           from,
           to);
     }
+  }
+
+  private static ShapeImpl endpointShape(
+      Observation endpoint,
+      org.integratedmodelling.klab.api.knowledge.observation.scale.space.Projection projection) {
+    if (endpoint.getGeometry() == null) {
+      throw new IllegalArgumentException("Relationship endpoint has no geometry: " + endpoint.getUrn());
+    }
+    var space = Scale.create(endpoint.getGeometry()).getSpace();
+    if (!(space instanceof ShapeImpl shape) || shape.isEmpty()) {
+      throw new IllegalArgumentException(
+          "Relationship endpoint has no usable spatial shape: " + endpoint.getUrn());
+    }
+    return shape.transform(projection);
+  }
+
+  static org.locationtech.jts.geom.Geometry relationshipGeometry(
+      org.locationtech.jts.geom.Geometry source,
+      org.locationtech.jts.geom.Geometry target) {
+    if (source == null || source.isEmpty() || target == null || target.isEmpty()) {
+      throw new IllegalArgumentException("Relationship endpoints must have non-empty geometry");
+    }
+    if (source.getDimension() == 2 || target.getDimension() == 2) {
+      return source.getFactory().createGeometryCollection(
+              new org.locationtech.jts.geom.Geometry[] {source, target})
+          .convexHull();
+    }
+
+    var sourceEndpoints = endpoints(source);
+    var targetEndpoints = endpoints(target);
+    Coordinate closestSource = null;
+    Coordinate closestTarget = null;
+    double closestDistance = Double.POSITIVE_INFINITY;
+    for (var sourceEndpoint : sourceEndpoints) {
+      for (var targetEndpoint : targetEndpoints) {
+        double distance = sourceEndpoint.distance(targetEndpoint);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestSource = sourceEndpoint;
+          closestTarget = targetEndpoint;
+        }
+      }
+    }
+    return source.getFactory().createLineString(
+        new Coordinate[] {new Coordinate(closestSource), new Coordinate(closestTarget)});
+  }
+
+  private static List<Coordinate> endpoints(org.locationtech.jts.geom.Geometry geometry) {
+    var ret = new ArrayList<Coordinate>();
+    for (int i = 0; i < geometry.getNumGeometries(); i++) {
+      var component = geometry.getGeometryN(i);
+      if (component instanceof Point point) {
+        ret.add(point.getCoordinate());
+      } else if (component instanceof LineString line) {
+        ret.add(line.getCoordinateN(0));
+        ret.add(line.getCoordinateN(line.getNumPoints() - 1));
+      } else {
+        throw new IllegalArgumentException(
+            "Unsupported relationship endpoint geometry: " + component.getGeometryType());
+      }
+    }
+    return ret;
   }
 
   static List<Observation> sample(List<Observation> pool, double percentage, Random random) {
