@@ -88,11 +88,12 @@ public final class RandomRelationships {
       throw new IllegalArgumentException("Relationship endpoint has no geometry: " + endpoint.getUrn());
     }
     var space = Scale.create(endpoint.getGeometry()).getSpace();
-    if (!(space instanceof ShapeImpl shape) || shape.isEmpty()) {
+    var shape = space == null ? null : space.getGeometricShape();
+    if (shape == null || shape.isEmpty()) {
       throw new IllegalArgumentException(
           "Relationship endpoint has no usable spatial shape: " + endpoint.getUrn());
     }
-    return shape.transform(projection);
+    return ShapeImpl.promote(shape).transform(projection);
   }
 
   static org.locationtech.jts.geom.Geometry relationshipGeometry(

@@ -46,6 +46,10 @@ class RandomRelationshipsTest {
   }
 
   private List<Emitted> generate(double percentage, long seed, boolean bond, boolean overlapping) {
+    return generate(percentage, seed, bond, overlapping, false);
+  }
+
+  private List<Emitted> generate(double percentage, long seed, boolean bond, boolean overlapping, boolean privateGeometry) {
     var source = observation(-1, false, true, false);
     var target = observation(-2, false, true, false);
     var relationship = observation(-3, true, true, bond);
@@ -53,6 +57,21 @@ class RandomRelationshipsTest {
     for (int i = 1; i <= 10; i++) {
       sources.add(observation(i, false, false, false));
       targets.add(observation(overlapping ? i : i + 10, false, false, false));
+    }
+    if (privateGeometry) {
+      for (var endpoint : java.util.stream.Stream.concat(sources.stream(), targets.stream()).toList()) {
+        var shape = Scale.create(endpoint.getGeometry()).getSpace().getGeometricShape();
+        var view = (org.integratedmodelling.klab.api.knowledge.observation.scale.space.Shape)
+            java.lang.reflect.Proxy.newProxyInstance(getClass().getClassLoader(),
+                new Class<?>[] {org.integratedmodelling.klab.api.knowledge.observation.scale.space.Shape.class},
+                (proxy, method, arguments) -> method.invoke(shape, arguments));
+        var space = mock(org.integratedmodelling.klab.api.knowledge.observation.scale.space.Space.class);
+        when(space.getGeometricShape()).thenReturn(view);
+        var scale = mock(Scale.class); when(scale.getSpace()).thenReturn(space);
+        var geometryView = mock(Geometry.LocalSnapshot.class);
+        when(geometryView.promote(any())).thenReturn(scale);
+        ((ObservationImpl) endpoint).setGeometry(geometryView);
+      }
     }
     var scope = mock(ContextScope.class); var runtime = mock(RuntimeService.class);
     when(scope.getService(RuntimeService.class)).thenReturn(runtime);
@@ -77,6 +96,11 @@ class RandomRelationshipsTest {
     });
     RandomRelationships.generate(builder, geometry, relationship.getObservable(), call, scope, source, target);
     return emitted;
+  }
+
+  @Test void privateEndpointGeometryViewsProduceTheSameConnections() {
+    assertEquals(generate(100, 42, false, false),
+        generate(100, 42, false, false, true));
   }
 
   @Test void percentagesSelectTheExpectedNumberOfSources() {
