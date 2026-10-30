@@ -65,7 +65,7 @@ public class RandomContextualizers {
       name = "categories",
       description =
           """
-                        Generate random concepts among the concrete closure of an abstract observable""",
+                        Generate random concepts among the concrete authored vocabulary specializing an observable""",
       geometry = "*",
       type = Artifact.Type.CONCEPT)
   public static Concept generateConcept(Observable observable, ServiceCall call, Scope scope) {
@@ -74,7 +74,7 @@ public class RandomContextualizers {
     var predicate = observable.builder(scope).without(SemanticRole.INHERENT).buildConcept();
 
     var concreteChildren =
-        scope.getService(Reasoner.class).closure(predicate).stream()
+        scope.getService(Reasoner.class).authoredClosure(predicate).stream()
             .filter(c -> !c.is(SemanticType.ABSTRACT))
             .toList();
     if (concreteChildren.size() == 0) {
